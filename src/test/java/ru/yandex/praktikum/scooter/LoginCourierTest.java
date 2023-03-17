@@ -1,5 +1,7 @@
 package ru.yandex.praktikum.scooter;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import org.hamcrest.CoreMatchers;
@@ -29,7 +31,7 @@ public class LoginCourierTest {
     public void setUp() {
         courier = CourierGenerator.getRandom();
 
-        courierClient.create(courier);
+        courierClient.createCourier(courier);
     }
 
     @After
@@ -38,6 +40,8 @@ public class LoginCourierTest {
     }
 
     @Test
+    @DisplayName("Positive check to login courier")
+    @Description("Check to login courier with valid parameters: login/password/first name")
     public void loginWithValidParameters() {
         int id = courierClient.login(CourierCredentials.from(courier))
                 .assertThat()
@@ -50,6 +54,8 @@ public class LoginCourierTest {
     }
 
     @Test
+    @DisplayName ("Negative check to login courier without required fields")
+    @Description("Check that courier can't login without login and password")
     public void failToLoginCourierWithoutRequiredFields() {
         CourierCredentials credentials = new CourierCredentials("", "");
 
@@ -61,6 +67,8 @@ public class LoginCourierTest {
     }
 
     @Test
+    @DisplayName ("Negative check to login courier with wrong password")
+    @Description("Check that courier can't login with wrong login OR password")
     public void failToLoginCourierWithWrongPassword() {
         CourierCredentials credentials = new CourierCredentials(courier.getLogin(), "kokoko");
 
@@ -72,6 +80,8 @@ public class LoginCourierTest {
     }
 
     @Test
+    @DisplayName ("Negative check to login courier without password")
+    @Description("Check that courier can't login without login OR password")
     public void failToLoginCourierWithoutPassword() {
         CourierCredentials credentials = new CourierCredentials(courier.getLogin(), "");
 
@@ -83,6 +93,8 @@ public class LoginCourierTest {
     }
 
     @Test
+    @DisplayName ("Negative check to login non existent courier")
+    @Description("Check that non existent courier can't login")
     public void failToLoginNonExistentCourier() {
         CourierCredentials credentials = new CourierCredentials("kokokoshechka", "kokoshka");
 

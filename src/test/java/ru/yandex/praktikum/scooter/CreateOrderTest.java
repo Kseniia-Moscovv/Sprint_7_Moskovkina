@@ -1,5 +1,7 @@
 package ru.yandex.praktikum.scooter;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,10 +48,12 @@ public class CreateOrderTest {
     }
 
     @Test
+    @DisplayName("Positive check to create a set of orders")
+    @Description("Check to create a set of orders with different parameters")
     public void createOrder() {
         Order order = new Order(firstName, lastName, address, metroStation, phone, rentTime, deliveryDate, comment, color);
 
-         orderClient.create(order)
+         orderClient.createOrder(order)
                 .assertThat()
                 .statusCode(HttpURLConnection.HTTP_CREATED)
                 .and()

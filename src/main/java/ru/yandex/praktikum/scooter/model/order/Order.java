@@ -1,5 +1,7 @@
 package ru.yandex.praktikum.scooter.model.order;
 
+import java.util.Arrays;
+
 public class Order {
     private String firstName;
     private String lastName;
@@ -95,5 +97,20 @@ public class Order {
 
     public void setColor(String[] color) {
         this.color = color;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", address='" + address + '\'' +
+                ", metroStation='" + metroStation + '\'' +
+                ", phone='" + phone + '\'' +
+                ", rentTime=" + rentTime +
+                ", deliveryDate='" + deliveryDate + '\'' +
+                ", comment='" + comment + '\'' +
+                ", color=" + Arrays.toString(color) +
+                '}';
     }
 }

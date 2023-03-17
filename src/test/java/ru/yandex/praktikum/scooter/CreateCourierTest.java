@@ -1,7 +1,10 @@
 package ru.yandex.praktikum.scooter;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
+import io.restassured.response.ValidatableResponse;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -28,31 +31,36 @@ public class CreateCourierTest {
     }
 
     @Test
+    @DisplayName("Positive check to create courier")
+    @Description("Check to create courier with valid parameters: login/password/first name")
     public void createCourierWithValidParameters() {
         Courier courier = CourierGenerator.getRandom();
 
-        courierClient.create(courier)
+        courierClient.createCourier(courier)
                 .assertThat()
                 .statusCode(HttpURLConnection.HTTP_CREATED)
                 .and()
                 .assertThat()
                 .body("ok", CoreMatchers.is(true));
 
-        int id = courierClient.login(CourierCredentials.from(courier))
-                .assertThat()
-                .body("id", CoreMatchers.notNullValue())
-                .extract().path("id");
+        ValidatableResponse loginResponse = courierClient.login(CourierCredentials.from(courier));
 
+        int id = loginResponse.extract().path("id");
         courierId = id;
+
+        loginResponse.assertThat()
+                .body("id", CoreMatchers.notNullValue());
     }
 
     @Test
+    @DisplayName ("Negative check to create double courier")
+    @Description("Check that double courier doesn't create")
     public void failToCreateDoubleCourier() {
         Courier courier = new Courier("kotek", "kot", "Gershman");
 
-        courierClient.create(courier);
+        courierClient.createCourier(courier);
 
-        courierClient.create(courier)
+        courierClient.createCourier(courier)
                 .assertThat()
                 .statusCode(HttpURLConnection.HTTP_CONFLICT)
                 .and()
@@ -61,10 +69,12 @@ public class CreateCourierTest {
     }
 
     @Test
+    @DisplayName ("Negative check to create courier without required fields")
+    @Description("Check that courier doesn't create without login and password")
     public void failToCreateCourierWithoutRequiredFields() {
         Courier courier = new Courier("", "", "");
 
-        courierClient.create(courier)
+        courierClient.createCourier(courier)
                 .assertThat()
                 .statusCode(HttpURLConnection.HTTP_BAD_REQUEST)
                 .and()
@@ -73,10 +83,12 @@ public class CreateCourierTest {
     }
 
     @Test
+    @DisplayName ("Negative check to create courier without password")
+    @Description("Check that courier doesn't create without login OR password")
     public void failToCreateCourierWithoutPassword() {
         Courier courier = new Courier("kotek", "", "Gershman");
 
-        courierClient.create(courier)
+        courierClient.createCourier(courier)
                 .assertThat()
                 .statusCode(HttpURLConnection.HTTP_BAD_REQUEST)
                 .and()
@@ -85,13 +97,15 @@ public class CreateCourierTest {
     }
 
     @Test
+    @DisplayName ("Negative check to create courier with similar login")
+    @Description("Check that courier doesn't create with similar login")
     public void failToCreateCourierWithSimilarLogin() {
         Courier courier = new Courier("kotek", "kot", "Gershman");
         Courier courierWithSimilarLogin = new Courier("kotek", "koshka", "Ksupchik");
 
-        courierClient.create(courier);
+        courierClient.createCourier(courier);
 
-        courierClient.create(courierWithSimilarLogin)
+        courierClient.createCourier(courierWithSimilarLogin)
                 .assertThat()
                 .statusCode(HttpURLConnection.HTTP_CONFLICT)
                 .and()

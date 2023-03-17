@@ -1,8 +1,9 @@
 package ru.yandex.praktikum.scooter;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
-import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,14 +42,14 @@ public class GetOrderListTest {
     @Before
     public void setUp() {
         Courier courier = CourierGenerator.getRandom();
-        courierClient.create(courier);
+        courierClient.createCourier(courier);
         int id = courierClient.login(CourierCredentials.from(courier))
                 .extract().path("id");
         courierId = id;
 
         for (int i = 0; i < NUMBER_OF_ORDERS; i++) {
             Order order = OrderGenerator.getRandom();
-            int track = orderClient.create(order)
+            int track = orderClient.createOrder(order)
                     .extract().path("track");
 
             int orderId = orderClient.getOrderIdByTrack(track)
@@ -68,6 +69,8 @@ public class GetOrderListTest {
     }
 
     @Test
+    @DisplayName("Positive check to get order list")
+    @Description("Check courier orders")
     public void getOrderList() {
         OrderListResponse orderList = orderClient.getList(courierId)
                 .assertThat()

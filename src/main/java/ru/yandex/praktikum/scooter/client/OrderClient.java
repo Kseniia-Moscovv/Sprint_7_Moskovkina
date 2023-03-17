@@ -12,7 +12,7 @@ public class OrderClient extends Client {
     protected static final String ORDER_URI = BASE_URI + "orders/";
 
     @Step("Create order {order}")
-    public ValidatableResponse create(Order order) {
+    public ValidatableResponse createOrder(Order order) {
         return given().spec(getBaseSpec())
                 .body(order)
                 .when()
